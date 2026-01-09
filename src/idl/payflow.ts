@@ -1,0 +1,1404 @@
+/**
+ * Program IDL in camelCase format in order to be used in JS/TS.
+ *
+ * Note that this is only a type helper and is not the actual IDL. The original
+ * IDL can be found at `target/idl/payflow.json`.
+ */
+export type Payflow = {
+  address: "2yUwGR18L5a8UqfkX49M4SenYCrS4B48chioKWCnMG3y";
+  metadata: {
+    name: "payflow";
+    version: "0.1.0";
+    spec: "0.1.0";
+    description: "PayFlow - Yield Discounting Protocol for Solana";
+  };
+  instructions: [
+    {
+      name: "buyDeal";
+      docs: ["Buy a deal", "Transfers payment to seller, activates the deal"];
+      discriminator: [238, 240, 163, 186, 237, 55, 172, 73];
+      accounts: [
+        {
+          name: "buyer";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "config";
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [112, 114, 111, 116, 111, 99, 111, 108, 95, 99, 111, 110, 102, 105, 103];
+              },
+            ];
+          };
+        },
+        {
+          name: "deal";
+          writable: true;
+        },
+        {
+          name: "buyerPaymentAccount";
+          docs: ["Token account de l'acheteur (USDC)"];
+          writable: true;
+        },
+        {
+          name: "sellerPaymentAccount";
+          docs: ["Token account du vendeur (reçoit le paiement)"];
+          writable: true;
+        },
+        {
+          name: "treasuryAccount";
+          docs: ["Treasury (reçoit les fees)"];
+          writable: true;
+        },
+        {
+          name: "tokenProgram";
+          address: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+        },
+      ];
+      args: [];
+    },
+    {
+      name: "buyMeteoraLpDeal";
+      docs: [
+        "Buy a Meteora LP fee deal",
+        "Buyer pays seller and gains rights to claim fees during the deal period",
+      ];
+      discriminator: [94, 186, 141, 79, 1, 136, 151, 241];
+      accounts: [
+        {
+          name: "buyer";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "config";
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [112, 114, 111, 116, 111, 99, 111, 108, 95, 99, 111, 110, 102, 105, 103];
+              },
+            ];
+          };
+        },
+        {
+          name: "deal";
+          writable: true;
+        },
+        {
+          name: "buyerPaymentAccount";
+          docs: ["Buyer's payment token account (USDC)"];
+          writable: true;
+        },
+        {
+          name: "sellerPaymentAccount";
+          docs: ["Seller's payment token account (receives payment)"];
+          writable: true;
+        },
+        {
+          name: "treasuryAccount";
+          docs: ["Treasury (receives protocol fees)"];
+          writable: true;
+        },
+        {
+          name: "tokenProgram";
+          address: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+        },
+      ];
+      args: [];
+    },
+    {
+      name: "buybackDeal";
+      docs: ["Buyback a deal before it ends (early exit)", "Seller pays back buyer with penalty"];
+      discriminator: [233, 113, 218, 213, 163, 75, 226, 0];
+      accounts: [
+        {
+          name: "seller";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "config";
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [112, 114, 111, 116, 111, 99, 111, 108, 95, 99, 111, 110, 102, 105, 103];
+              },
+            ];
+          };
+        },
+        {
+          name: "deal";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [121, 105, 101, 108, 100, 95, 100, 101, 97, 108];
+              },
+              {
+                kind: "account";
+                path: "deal.deal_id";
+                account: "yieldDeal";
+              },
+            ];
+          };
+        },
+        {
+          name: "vault";
+          docs: ["Vault contenant les receipt tokens"];
+          writable: true;
+        },
+        {
+          name: "sellerPaymentAccount";
+          docs: ["Token account du vendeur pour payer le buyback (USDC)"];
+          writable: true;
+        },
+        {
+          name: "sellerReceiptAccount";
+          docs: ["Token account du vendeur pour récupérer ses receipt tokens"];
+          writable: true;
+        },
+        {
+          name: "buyerPaymentAccount";
+          docs: ["Token account de l'acheteur (reçoit le remboursement)"];
+          writable: true;
+        },
+        {
+          name: "tokenProgram";
+          address: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+        },
+      ];
+      args: [
+        {
+          name: "yieldAccumulated";
+          type: "u64";
+        },
+      ];
+    },
+    {
+      name: "cancelDeal";
+      docs: [
+        "Cancel a deal that hasn't been purchased yet",
+        "Returns the locked tokens to the seller",
+      ];
+      discriminator: [158, 86, 193, 45, 168, 111, 48, 29];
+      accounts: [
+        {
+          name: "seller";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "deal";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [121, 105, 101, 108, 100, 95, 100, 101, 97, 108];
+              },
+              {
+                kind: "account";
+                path: "deal.deal_id";
+                account: "yieldDeal";
+              },
+            ];
+          };
+        },
+        {
+          name: "vault";
+          docs: ["Vault contenant les receipt tokens"];
+          writable: true;
+        },
+        {
+          name: "sellerTokenAccount";
+          docs: ["Token account du vendeur (récupère ses tokens)"];
+          writable: true;
+        },
+        {
+          name: "tokenProgram";
+          address: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+        },
+      ];
+      args: [];
+    },
+    {
+      name: "cancelMeteoraLpDeal";
+      docs: [
+        "Cancel a Meteora LP deal before it's purchased",
+        "Seller can retrieve their Position NFT",
+      ];
+      discriminator: [231, 205, 1, 32, 38, 51, 147, 110];
+      accounts: [
+        {
+          name: "seller";
+          docs: ["Only the seller can cancel"];
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "deal";
+          writable: true;
+        },
+        {
+          name: "nftVault";
+          docs: ["The vault holding the Position NFT"];
+          writable: true;
+        },
+        {
+          name: "sellerNftAccount";
+          docs: ["Seller's token account to receive the NFT back"];
+          writable: true;
+        },
+        {
+          name: "positionNftMint";
+          docs: ["Position NFT mint (needed for transfer_checked)"];
+        },
+        {
+          name: "nftTokenProgram";
+        },
+      ];
+      args: [];
+    },
+    {
+      name: "claimMeteoraFees";
+      docs: [
+        "Claim accumulated Meteora fees",
+        "Buyer can call this anytime during the deal to claim fees",
+      ];
+      discriminator: [21, 207, 178, 64, 130, 211, 31, 100];
+      accounts: [
+        {
+          name: "buyer";
+          docs: ["The buyer who owns the fee rights during the deal"];
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "deal";
+          writable: true;
+        },
+        {
+          name: "nftVault";
+          docs: ["The vault holding the Position NFT (deal is the authority)"];
+        },
+        {
+          name: "buyerTokenAAccount";
+          docs: ["Buyer's token account to receive Token A fees"];
+          writable: true;
+        },
+        {
+          name: "buyerTokenBAccount";
+          docs: ["Buyer's token account to receive Token B fees"];
+          writable: true;
+        },
+        {
+          name: "meteoraProgram";
+          docs: ["Meteora DAMM v2 Program"];
+        },
+        {
+          name: "meteoraPosition";
+          docs: ["Meteora Position account"];
+          writable: true;
+        },
+        {
+          name: "meteoraPool";
+          docs: ["Meteora Pool account"];
+          writable: true;
+        },
+        {
+          name: "poolTokenAVault";
+          docs: ["Pool's Token A vault"];
+          writable: true;
+        },
+        {
+          name: "poolTokenBVault";
+          docs: ["Pool's Token B vault"];
+          writable: true;
+        },
+        {
+          name: "tokenAMint";
+          docs: ["Token A mint"];
+        },
+        {
+          name: "tokenBMint";
+          docs: ["Token B mint"];
+        },
+        {
+          name: "tokenProgram";
+          address: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+        },
+      ];
+      args: [];
+    },
+    {
+      name: "crankSettle";
+      docs: [
+        "Crank-style settlement for expired deals",
+        "Anyone can call this to settle deals and receive rent as incentive",
+      ];
+      discriminator: [103, 68, 217, 130, 163, 137, 13, 99];
+      accounts: [
+        {
+          name: "cranker";
+          docs: [
+            "The cranker/keeper who triggers the settlement",
+            "Receives rent from closed vault account",
+          ];
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "deal";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [121, 105, 101, 108, 100, 95, 100, 101, 97, 108];
+              },
+              {
+                kind: "account";
+                path: "deal.deal_id";
+                account: "yieldDeal";
+              },
+            ];
+          };
+        },
+        {
+          name: "vault";
+          docs: ["Vault containing the locked receipt tokens"];
+          writable: true;
+        },
+        {
+          name: "buyerTokenAccount";
+          docs: ["Buyer's token account (receives yield in receipt tokens)"];
+          writable: true;
+        },
+        {
+          name: "sellerTokenAccount";
+          docs: ["Seller's token account (receives principal)"];
+          writable: true;
+        },
+        {
+          name: "tokenProgram";
+          address: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+        },
+      ];
+      args: [
+        {
+          name: "currentTokenValue";
+          type: "u64";
+        },
+      ];
+    },
+    {
+      name: "createDeal";
+      docs: ["Create a new yield deal", "Locks receipt tokens (kUSDC, mSOL, etc.) in a vault PDA"];
+      discriminator: [198, 212, 144, 151, 97, 56, 149, 113];
+      accounts: [
+        {
+          name: "seller";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "config";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [112, 114, 111, 116, 111, 99, 111, 108, 95, 99, 111, 110, 102, 105, 103];
+              },
+            ];
+          };
+        },
+        {
+          name: "deal";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [121, 105, 101, 108, 100, 95, 100, 101, 97, 108];
+              },
+              {
+                kind: "account";
+                path: "config.deal_counter";
+                account: "protocolConfig";
+              },
+            ];
+          };
+        },
+        {
+          name: "sellerTokenAccount";
+          docs: ["Le token account du vendeur (contient kUSDC, mSOL, etc.)"];
+          writable: true;
+        },
+        {
+          name: "vault";
+          docs: ["Vault PDA pour stocker les tokens lockés"];
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [118, 97, 117, 108, 116];
+              },
+              {
+                kind: "account";
+                path: "deal";
+              },
+            ];
+          };
+        },
+        {
+          name: "receiptTokenMint";
+          docs: ["Mint du receipt token"];
+        },
+        {
+          name: "paymentMint";
+          docs: ["Mint du token de paiement (USDC)"];
+        },
+        {
+          name: "tokenProgram";
+          address: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+        },
+        {
+          name: "systemProgram";
+          address: "11111111111111111111111111111111";
+        },
+        {
+          name: "rent";
+          address: "SysvarRent111111111111111111111111111111111";
+        },
+      ];
+      args: [
+        {
+          name: "params";
+          type: {
+            defined: {
+              name: "createDealParams";
+            };
+          };
+        },
+      ];
+    },
+    {
+      name: "createMeteoraLpDeal";
+      docs: [
+        "Create a new Meteora LP fee deal",
+        "Locks a Position NFT in PayFlow vault to sell future fees",
+      ];
+      discriminator: [200, 60, 129, 175, 155, 62, 24, 62];
+      accounts: [
+        {
+          name: "seller";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "config";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [112, 114, 111, 116, 111, 99, 111, 108, 95, 99, 111, 110, 102, 105, 103];
+              },
+            ];
+          };
+        },
+        {
+          name: "deal";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [109, 101, 116, 101, 111, 114, 97, 95, 108, 112, 95, 100, 101, 97, 108];
+              },
+              {
+                kind: "account";
+                path: "config.deal_counter";
+                account: "protocolConfig";
+              },
+            ];
+          };
+        },
+        {
+          name: "sellerNftAccount";
+          docs: ["The seller's token account holding the Position NFT"];
+          writable: true;
+        },
+        {
+          name: "nftVault";
+          docs: ["Vault PDA to hold the Position NFT"];
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  109,
+                  101,
+                  116,
+                  101,
+                  111,
+                  114,
+                  97,
+                  95,
+                  110,
+                  102,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                ];
+              },
+              {
+                kind: "account";
+                path: "deal";
+              },
+            ];
+          };
+        },
+        {
+          name: "positionNftMint";
+          docs: ["The Position NFT mint (1 NFT = 1 LP position)"];
+        },
+        {
+          name: "tokenAMint";
+          docs: ["Token A mint from the pool"];
+        },
+        {
+          name: "tokenBMint";
+          docs: ["Token B mint from the pool"];
+        },
+        {
+          name: "paymentMint";
+          docs: ["Payment token mint (usually USDC)"];
+        },
+        {
+          name: "nftTokenProgram";
+          docs: ["Token program for NFT (Token or Token2022)"];
+        },
+        {
+          name: "systemProgram";
+          address: "11111111111111111111111111111111";
+        },
+        {
+          name: "rent";
+          address: "SysvarRent111111111111111111111111111111111";
+        },
+      ];
+      args: [
+        {
+          name: "params";
+          type: {
+            defined: {
+              name: "createMeteoraLpDealParams";
+            };
+          };
+        },
+      ];
+    },
+    {
+      name: "initialize";
+      docs: [
+        "Initialize the PayFlow protocol",
+        "Sets up the global configuration with default parameters",
+      ];
+      discriminator: [175, 175, 109, 31, 13, 152, 155, 237];
+      accounts: [
+        {
+          name: "authority";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "config";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [112, 114, 111, 116, 111, 99, 111, 108, 95, 99, 111, 110, 102, 105, 103];
+              },
+            ];
+          };
+        },
+        {
+          name: "treasury";
+        },
+        {
+          name: "systemProgram";
+          address: "11111111111111111111111111111111";
+        },
+      ];
+      args: [];
+    },
+    {
+      name: "settleDeal";
+      docs: [
+        "Settle a deal after it has ended",
+        "Distributes yield to buyer and principal to seller",
+      ];
+      discriminator: [28, 10, 168, 174, 203, 149, 134, 54];
+      accounts: [
+        {
+          name: "payer";
+          docs: ["N'importe qui peut trigger le settlement (permissionless)"];
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "deal";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [121, 105, 101, 108, 100, 95, 100, 101, 97, 108];
+              },
+              {
+                kind: "account";
+                path: "deal.deal_id";
+                account: "yieldDeal";
+              },
+            ];
+          };
+        },
+        {
+          name: "vault";
+          docs: ["Vault contenant les receipt tokens"];
+          writable: true;
+        },
+        {
+          name: "buyerTokenAccount";
+          docs: ["Token account de l'acheteur (reçoit le yield en receipt tokens)"];
+          writable: true;
+        },
+        {
+          name: "sellerTokenAccount";
+          docs: ["Token account du vendeur (reçoit le principal)"];
+          writable: true;
+        },
+        {
+          name: "tokenProgram";
+          address: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+        },
+      ];
+      args: [
+        {
+          name: "currentTokenValue";
+          type: "u64";
+        },
+      ];
+    },
+    {
+      name: "settleMeteoraLpDeal";
+      docs: [
+        "Settle a Meteora LP deal after it ends",
+        "Returns the Position NFT to the seller (permissionless)",
+      ];
+      discriminator: [195, 32, 60, 155, 142, 18, 234, 240];
+      accounts: [
+        {
+          name: "payer";
+          docs: ["Anyone can settle an expired deal (permissionless)"];
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "deal";
+          writable: true;
+        },
+        {
+          name: "nftVault";
+          docs: ["The vault holding the Position NFT"];
+          writable: true;
+        },
+        {
+          name: "sellerNftAccount";
+          docs: ["Seller's token account to receive the NFT back"];
+          writable: true;
+        },
+        {
+          name: "positionNftMint";
+          docs: ["Position NFT mint (needed for transfer_checked)"];
+        },
+        {
+          name: "nftTokenProgram";
+        },
+      ];
+      args: [];
+    },
+    {
+      name: "updateConfig";
+      docs: ["Update protocol configuration", "Only callable by authority"];
+      discriminator: [29, 158, 252, 191, 10, 83, 219, 99];
+      accounts: [
+        {
+          name: "config";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [112, 114, 111, 116, 111, 99, 111, 108, 95, 99, 111, 110, 102, 105, 103];
+              },
+            ];
+          };
+        },
+        {
+          name: "authority";
+          signer: true;
+          relations: ["config"];
+        },
+      ];
+      args: [
+        {
+          name: "params";
+          type: {
+            defined: {
+              name: "updateConfigParams";
+            };
+          };
+        },
+      ];
+    },
+  ];
+  accounts: [
+    {
+      name: "meteoraLpDeal";
+      discriminator: [88, 16, 225, 179, 189, 254, 44, 170];
+    },
+    {
+      name: "protocolConfig";
+      discriminator: [207, 91, 250, 28, 152, 179, 215, 209];
+    },
+    {
+      name: "yieldDeal";
+      discriminator: [216, 238, 159, 168, 226, 65, 200, 38];
+    },
+  ];
+  errors: [
+    {
+      code: 6000;
+      name: "protocolPaused";
+      msg: "Protocol is paused";
+    },
+    {
+      code: 6001;
+      name: "invalidDuration";
+      msg: "Invalid duration (must be 30, 60, or 90 days)";
+    },
+    {
+      code: 6002;
+      name: "invalidPrice";
+      msg: "Invalid price";
+    },
+    {
+      code: 6003;
+      name: "invalidAmount";
+      msg: "Invalid amount";
+    },
+    {
+      code: 6004;
+      name: "dealNotAvailable";
+      msg: "Deal is not available for purchase";
+    },
+    {
+      code: 6005;
+      name: "dealNotActive";
+      msg: "Deal is not active";
+    },
+    {
+      code: 6006;
+      name: "dealNotEnded";
+      msg: "Deal has not ended yet";
+    },
+    {
+      code: 6007;
+      name: "dealEnded";
+      msg: "Deal has already ended";
+    },
+    {
+      code: 6008;
+      name: "dealAlreadyActive";
+      msg: "Deal is already active (has a buyer)";
+    },
+    {
+      code: 6009;
+      name: "notSeller";
+      msg: "Only the seller can perform this action";
+    },
+    {
+      code: 6010;
+      name: "notBuyer";
+      msg: "Only the buyer can perform this action";
+    },
+    {
+      code: 6011;
+      name: "insufficientFunds";
+      msg: "Insufficient funds for buyback";
+    },
+    {
+      code: 6012;
+      name: "unauthorized";
+      msg: "unauthorized";
+    },
+    {
+      code: 6013;
+      name: "mathOverflow";
+      msg: "Math overflow";
+    },
+    {
+      code: 6014;
+      name: "invalidMint";
+      msg: "Receipt token mint is not in the allowed whitelist";
+    },
+    {
+      code: 6015;
+      name: "whitelistFull";
+      msg: "Whitelist is full, cannot add more mints";
+    },
+    {
+      code: 6016;
+      name: "mintAlreadyWhitelisted";
+      msg: "Mint is already in the whitelist";
+    },
+    {
+      code: 6017;
+      name: "mintNotInWhitelist";
+      msg: "Mint is not in the whitelist";
+    },
+    {
+      code: 6018;
+      name: "invalidMeteoraPosition";
+      msg: "Invalid Meteora position";
+    },
+    {
+      code: 6019;
+      name: "positionPoolMismatch";
+      msg: "Position does not belong to the expected pool";
+    },
+    {
+      code: 6020;
+      name: "invalidPositionNft";
+      msg: "Invalid Position NFT - must be amount 1";
+    },
+    {
+      code: 6021;
+      name: "notDealBuyer";
+      msg: "Caller is not the deal buyer";
+    },
+  ];
+  types: [
+    {
+      name: "createDealParams";
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "receiptTokensAmount";
+            type: "u64";
+          },
+          {
+            name: "principalValueAtLock";
+            type: "u64";
+          },
+          {
+            name: "expectedYield";
+            type: "u64";
+          },
+          {
+            name: "sellingPrice";
+            type: "u64";
+          },
+          {
+            name: "durationDays";
+            type: "u16";
+          },
+          {
+            name: "sourceProtocol";
+            type: {
+              defined: {
+                name: "sourceProtocol";
+              };
+            };
+          },
+        ];
+      };
+    },
+    {
+      name: "createMeteoraLpDealParams";
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "positionAccount";
+            docs: ["Meteora Position account address (for reference)"];
+            type: "pubkey";
+          },
+          {
+            name: "pool";
+            docs: ["Meteora Pool address"];
+            type: "pubkey";
+          },
+          {
+            name: "feeAAtLock";
+            docs: ["Current fee_a_pending from the position (snapshot)"];
+            type: "u64";
+          },
+          {
+            name: "feeBAtLock";
+            docs: ["Current fee_b_pending from the position (snapshot)"];
+            type: "u64";
+          },
+          {
+            name: "expectedFeeA";
+            docs: ["Estimated Token A fees during deal period"];
+            type: "u64";
+          },
+          {
+            name: "expectedFeeB";
+            docs: ["Estimated Token B fees during deal period"];
+            type: "u64";
+          },
+          {
+            name: "expectedFeeValueUsdc";
+            docs: ["Combined estimated value in USDC"];
+            type: "u64";
+          },
+          {
+            name: "sellingPrice";
+            docs: ["Price asked by seller (in payment token)"];
+            type: "u64";
+          },
+          {
+            name: "durationDays";
+            docs: ["Duration in days (30, 60, 90, 180, 365)"];
+            type: "u16";
+          },
+        ];
+      };
+    },
+    {
+      name: "dealStatus";
+      type: {
+        kind: "enum";
+        variants: [
+          {
+            name: "created";
+          },
+          {
+            name: "active";
+          },
+          {
+            name: "settled";
+          },
+          {
+            name: "cancelled";
+          },
+          {
+            name: "boughtBack";
+          },
+        ];
+      };
+    },
+    {
+      name: "meteoraLpDeal";
+      docs: [
+        "Meteora DAMM v2 LP Fee Deal",
+        "Represents a deal where a LP sells their future fees for a specific period.",
+        "The Position NFT is locked in PayFlow vault during the deal.",
+      ];
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "dealId";
+            docs: ["Unique deal ID (auto-incremented)"];
+            type: "u64";
+          },
+          {
+            name: "bump";
+            docs: ["PDA bump seed"];
+            type: "u8";
+          },
+          {
+            name: "seller";
+            docs: ["Seller - original owner of the Position NFT"];
+            type: "pubkey";
+          },
+          {
+            name: "buyer";
+            docs: ["Buyer - purchaser of the fee rights (default if not purchased)"];
+            type: "pubkey";
+          },
+          {
+            name: "positionNftMint";
+            docs: ["The Position NFT mint (1 NFT = 1 LP position)"];
+            type: "pubkey";
+          },
+          {
+            name: "positionAccount";
+            docs: ["The Meteora Position account address"];
+            type: "pubkey";
+          },
+          {
+            name: "positionNftVault";
+            docs: ["PayFlow vault holding the Position NFT"];
+            type: "pubkey";
+          },
+          {
+            name: "pool";
+            docs: ["The Meteora pool address"];
+            type: "pubkey";
+          },
+          {
+            name: "tokenAMint";
+            docs: ["Token A mint of the pool"];
+            type: "pubkey";
+          },
+          {
+            name: "tokenBMint";
+            docs: ["Token B mint of the pool"];
+            type: "pubkey";
+          },
+          {
+            name: "feeAAtLock";
+            docs: ["fee_a_pending at deal creation (snapshot)"];
+            type: "u64";
+          },
+          {
+            name: "feeBAtLock";
+            docs: ["fee_b_pending at deal creation (snapshot)"];
+            type: "u64";
+          },
+          {
+            name: "expectedFeeA";
+            docs: ["Estimated Token A fees during deal period"];
+            type: "u64";
+          },
+          {
+            name: "expectedFeeB";
+            docs: ["Estimated Token B fees during deal period"];
+            type: "u64";
+          },
+          {
+            name: "expectedFeeValueUsdc";
+            docs: ["Combined estimated value in USDC (for reference)"];
+            type: "u64";
+          },
+          {
+            name: "sellingPrice";
+            docs: ["Price set by seller (in payment_mint tokens)"];
+            type: "u64";
+          },
+          {
+            name: "paymentMint";
+            docs: ["Payment token mint (usually USDC)"];
+            type: "pubkey";
+          },
+          {
+            name: "durationDays";
+            docs: ["Duration in days (30, 60, 90, 180, 365)"];
+            type: "u16";
+          },
+          {
+            name: "createdAt";
+            docs: ["Timestamp when deal was created"];
+            type: "i64";
+          },
+          {
+            name: "purchasedAt";
+            docs: ["Timestamp when deal was purchased (0 if not yet)"];
+            type: "i64";
+          },
+          {
+            name: "endsAt";
+            docs: ["Timestamp when deal ends (0 if not yet purchased)"];
+            type: "i64";
+          },
+          {
+            name: "status";
+            docs: ["Current deal status"];
+            type: {
+              defined: {
+                name: "dealStatus";
+              };
+            };
+          },
+        ];
+      };
+    },
+    {
+      name: "protocolConfig";
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "authority";
+            type: "pubkey";
+          },
+          {
+            name: "treasury";
+            type: "pubkey";
+          },
+          {
+            name: "feeBps";
+            type: "u16";
+          },
+          {
+            name: "minDurationDays";
+            type: "u16";
+          },
+          {
+            name: "maxDurationDays";
+            type: "u16";
+          },
+          {
+            name: "basePenaltyBps";
+            type: "u16";
+          },
+          {
+            name: "minPenaltyBps";
+            type: "u16";
+          },
+          {
+            name: "isPaused";
+            type: "bool";
+          },
+          {
+            name: "dealCounter";
+            type: "u64";
+          },
+          {
+            name: "bump";
+            type: "u8";
+          },
+          {
+            name: "allowedMints";
+            docs: ["Whitelist of allowed receipt token mints (kUSDC, mSOL, etc.)"];
+            type: {
+              vec: "pubkey";
+            };
+          },
+        ];
+      };
+    },
+    {
+      name: "sourceProtocol";
+      docs: [
+        "Source protocol categories for yield-bearing assets",
+        "Phase 1: Lending & Liquid Staking (receipt tokens that appreciate)",
+        "Phase 2: LP Positions (coming soon)",
+        "Phase 3: Fee Streams (coming soon)",
+      ];
+      type: {
+        kind: "enum";
+        variants: [
+          {
+            name: "kamino";
+          },
+          {
+            name: "marginFi";
+          },
+          {
+            name: "solend";
+          },
+          {
+            name: "save";
+          },
+          {
+            name: "marinade";
+          },
+          {
+            name: "jito";
+          },
+          {
+            name: "blaze";
+          },
+          {
+            name: "sanctum";
+          },
+          {
+            name: "lido";
+          },
+          {
+            name: "raydiumLp";
+          },
+          {
+            name: "meteoraLp";
+          },
+          {
+            name: "orcaLp";
+          },
+          {
+            name: "feeStream";
+          },
+        ];
+      };
+    },
+    {
+      name: "updateConfigParams";
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "feeBps";
+            docs: ["New fee in basis points (None = no change)"];
+            type: {
+              option: "u16";
+            };
+          },
+          {
+            name: "basePenaltyBps";
+            docs: ["New base penalty in basis points (None = no change)"];
+            type: {
+              option: "u16";
+            };
+          },
+          {
+            name: "minPenaltyBps";
+            docs: ["New minimum penalty in basis points (None = no change)"];
+            type: {
+              option: "u16";
+            };
+          },
+          {
+            name: "isPaused";
+            docs: ["Pause/unpause the protocol (None = no change)"];
+            type: {
+              option: "bool";
+            };
+          },
+          {
+            name: "newTreasury";
+            docs: ["New treasury address (None = no change)"];
+            type: {
+              option: "pubkey";
+            };
+          },
+          {
+            name: "newAuthority";
+            docs: ["New authority address (None = no change)"];
+            type: {
+              option: "pubkey";
+            };
+          },
+          {
+            name: "addMint";
+            docs: ["Mint to add to whitelist (None = no addition)"];
+            type: {
+              option: "pubkey";
+            };
+          },
+          {
+            name: "removeMint";
+            docs: ["Mint to remove from whitelist (None = no removal)"];
+            type: {
+              option: "pubkey";
+            };
+          },
+        ];
+      };
+    },
+    {
+      name: "yieldDeal";
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "dealId";
+            type: "u64";
+          },
+          {
+            name: "bump";
+            type: "u8";
+          },
+          {
+            name: "seller";
+            type: "pubkey";
+          },
+          {
+            name: "buyer";
+            type: "pubkey";
+          },
+          {
+            name: "receiptTokenMint";
+            type: "pubkey";
+          },
+          {
+            name: "receiptTokenVault";
+            type: "pubkey";
+          },
+          {
+            name: "receiptTokensAmount";
+            type: "u64";
+          },
+          {
+            name: "principalValueAtLock";
+            type: "u64";
+          },
+          {
+            name: "expectedYield";
+            type: "u64";
+          },
+          {
+            name: "sellingPrice";
+            type: "u64";
+          },
+          {
+            name: "paymentMint";
+            type: "pubkey";
+          },
+          {
+            name: "durationDays";
+            type: "u16";
+          },
+          {
+            name: "createdAt";
+            type: "i64";
+          },
+          {
+            name: "purchasedAt";
+            type: "i64";
+          },
+          {
+            name: "endsAt";
+            type: "i64";
+          },
+          {
+            name: "status";
+            type: {
+              defined: {
+                name: "dealStatus";
+              };
+            };
+          },
+          {
+            name: "sourceProtocol";
+            type: {
+              defined: {
+                name: "sourceProtocol";
+              };
+            };
+          },
+        ];
+      };
+    },
+  ];
+};
