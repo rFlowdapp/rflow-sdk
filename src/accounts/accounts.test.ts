@@ -25,6 +25,7 @@ function createMockYieldDealAccount(overrides: Partial<YieldDealAccount> = {}): 
     expectedYield: new BN(50000000),
     sellingPrice: new BN(40000000),
     paymentMint: Keypair.generate().publicKey,
+    exchangeRateAtLock: new BN(1000000), // 1.0 scaled by 1e6
     durationDays: 90,
     createdAt: new BN(Math.floor(Date.now() / 1000)),
     purchasedAt: new BN(0),
@@ -80,6 +81,8 @@ function createMockProtocolConfigAccount(
     dealCounter: new BN(42),
     bump: 253,
     allowedMints: [Keypair.generate().publicKey, Keypair.generate().publicKey],
+    allowedPaymentMints: [Keypair.generate().publicKey],
+    useOracle: false,
     ...overrides,
   };
 }
@@ -172,11 +175,16 @@ describe("transformYieldDeal", () => {
   it("should handle all SourceProtocol values", () => {
     const protocols = [
       { anchor: { kamino: {} }, expected: SourceProtocol.Kamino },
-      { anchor: { marginFi: {} }, expected: SourceProtocol.MarginFi },
       { anchor: { solend: {} }, expected: SourceProtocol.Solend },
+      { anchor: { save: {} }, expected: SourceProtocol.Save },
       { anchor: { marinade: {} }, expected: SourceProtocol.Marinade },
       { anchor: { jito: {} }, expected: SourceProtocol.Jito },
+      { anchor: { blaze: {} }, expected: SourceProtocol.Blaze },
+      { anchor: { sanctum: {} }, expected: SourceProtocol.Sanctum },
+      { anchor: { raydiumLp: {} }, expected: SourceProtocol.RaydiumLp },
       { anchor: { meteoraLp: {} }, expected: SourceProtocol.MeteoraLp },
+      { anchor: { orcaLp: {} }, expected: SourceProtocol.OrcaLp },
+      { anchor: { feeStream: {} }, expected: SourceProtocol.FeeStream },
     ];
 
     protocols.forEach(({ anchor, expected }) => {

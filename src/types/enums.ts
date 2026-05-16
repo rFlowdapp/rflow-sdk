@@ -11,11 +11,11 @@ export enum DealStatus {
 
 /**
  * Source Protocol - matches on-chain enum
+ * Note: Must match IDL exactly (no marginFi, no lido in on-chain program)
  */
 export enum SourceProtocol {
   // Phase 1: Lending
   Kamino = "kamino",
-  MarginFi = "marginfi",
   Solend = "solend",
   Save = "save",
   // Phase 1: Liquid Staking
@@ -23,7 +23,6 @@ export enum SourceProtocol {
   Jito = "jito",
   Blaze = "blaze",
   Sanctum = "sanctum",
-  Lido = "lido",
   // Phase 2: LP Positions
   RaydiumLp = "raydium_lp",
   MeteoraLp = "meteora_lp",
@@ -43,7 +42,6 @@ export type ProtocolCategory = "lending" | "staking" | "lp" | "fee";
 export function getProtocolCategory(protocol: SourceProtocol): ProtocolCategory {
   switch (protocol) {
     case SourceProtocol.Kamino:
-    case SourceProtocol.MarginFi:
     case SourceProtocol.Solend:
     case SourceProtocol.Save:
       return "lending";
@@ -51,7 +49,6 @@ export function getProtocolCategory(protocol: SourceProtocol): ProtocolCategory 
     case SourceProtocol.Jito:
     case SourceProtocol.Blaze:
     case SourceProtocol.Sanctum:
-    case SourceProtocol.Lido:
       return "staking";
     case SourceProtocol.RaydiumLp:
     case SourceProtocol.MeteoraLp:
@@ -64,17 +61,16 @@ export function getProtocolCategory(protocol: SourceProtocol): ProtocolCategory 
 
 /**
  * Anchor enum format for on-chain SourceProtocol
+ * Must match IDL exactly
  */
 export type AnchorSourceProtocol =
   | { kamino: Record<string, never> }
-  | { marginFi: Record<string, never> }
   | { solend: Record<string, never> }
   | { save: Record<string, never> }
   | { marinade: Record<string, never> }
   | { jito: Record<string, never> }
   | { blaze: Record<string, never> }
   | { sanctum: Record<string, never> }
-  | { lido: Record<string, never> }
   | { raydiumLp: Record<string, never> }
   | { meteoraLp: Record<string, never> }
   | { orcaLp: Record<string, never> }
@@ -96,14 +92,12 @@ export type AnchorDealStatus =
 export function toAnchorSourceProtocol(protocol: SourceProtocol): AnchorSourceProtocol {
   const map: Record<SourceProtocol, AnchorSourceProtocol> = {
     [SourceProtocol.Kamino]: { kamino: {} },
-    [SourceProtocol.MarginFi]: { marginFi: {} },
     [SourceProtocol.Solend]: { solend: {} },
     [SourceProtocol.Save]: { save: {} },
     [SourceProtocol.Marinade]: { marinade: {} },
     [SourceProtocol.Jito]: { jito: {} },
     [SourceProtocol.Blaze]: { blaze: {} },
     [SourceProtocol.Sanctum]: { sanctum: {} },
-    [SourceProtocol.Lido]: { lido: {} },
     [SourceProtocol.RaydiumLp]: { raydiumLp: {} },
     [SourceProtocol.MeteoraLp]: { meteoraLp: {} },
     [SourceProtocol.OrcaLp]: { orcaLp: {} },
@@ -117,14 +111,12 @@ export function toAnchorSourceProtocol(protocol: SourceProtocol): AnchorSourcePr
  */
 export function fromAnchorSourceProtocol(protocol: AnchorSourceProtocol): SourceProtocol {
   if ("kamino" in protocol) return SourceProtocol.Kamino;
-  if ("marginFi" in protocol) return SourceProtocol.MarginFi;
   if ("solend" in protocol) return SourceProtocol.Solend;
   if ("save" in protocol) return SourceProtocol.Save;
   if ("marinade" in protocol) return SourceProtocol.Marinade;
   if ("jito" in protocol) return SourceProtocol.Jito;
   if ("blaze" in protocol) return SourceProtocol.Blaze;
   if ("sanctum" in protocol) return SourceProtocol.Sanctum;
-  if ("lido" in protocol) return SourceProtocol.Lido;
   if ("raydiumLp" in protocol) return SourceProtocol.RaydiumLp;
   if ("meteoraLp" in protocol) return SourceProtocol.MeteoraLp;
   if ("orcaLp" in protocol) return SourceProtocol.OrcaLp;

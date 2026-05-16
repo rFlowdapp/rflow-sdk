@@ -1,4 +1,4 @@
-import { BN } from "@coral-xyz/anchor";
+import { BN } from "../internal/anchor";
 
 /** Maximum safe integer as BN for overflow checks */
 const MAX_SAFE_INTEGER_BN = new BN(Number.MAX_SAFE_INTEGER);

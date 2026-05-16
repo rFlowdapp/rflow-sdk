@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { BN } from "@coral-xyz/anchor";
+import { BN } from "../internal/anchor";
 import { PROGRAM_ID, SEEDS } from "../constants";
 
 /**

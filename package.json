@@ -1,7 +1,7 @@
 {
   "name": "@rflowdapp/rflow",
-  "version": "0.1.0-beta.1",
-  "description": "TypeScript SDK for the rFlow Solana protocol - Yield Discounting on Solana",
+  "version": "0.2.0",
+  "description": "TypeScript SDK for the rFlow Solana protocol — yield discounting + Meteora LP fee deals on Solana mainnet.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -13,16 +13,22 @@
         "default": "./dist/index.js"
       },
       "require": {
-        "types": "./dist/index.d.ts",
+        "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
     }
   },
   "files": [
     "dist",
+    "src",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -37,27 +43,56 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rFlowdapp/rflow-sdk.git"
+    "url": "git+https://github.com/rFlowdapp/rflow-sdk.git"
+  },
+  "homepage": "https://github.com/rFlowdapp/rflow-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/rFlowdapp/rflow-sdk/issues"
   },
   "keywords": [
     "solana",
     "anchor",
     "defi",
     "yield",
+    "yield-trading",
+    "yield-tokenization",
     "rflow",
+    "meteora",
+    "damm-v2",
+    "lst",
+    "pyth",
     "blockchain",
-    "web3"
+    "web3",
+    "typescript",
+    "sdk"
   ],
-  "author": "rFlow Protocol",
+  "author": "rFlow Protocol <hello@rflow.app>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "@coral-xyz/anchor": ">=0.29.0 <0.33.0",
     "@solana/spl-token": "^0.4.0",
     "@solana/web3.js": "^1.90.0"
   },
+  "peerDependenciesMeta": {
+    "@pythnetwork/hermes-client": {
+      "optional": true
+    },
+    "@pythnetwork/pyth-solana-receiver": {
+      "optional": true
+    }
+  },
+  "optionalDependencies": {
+    "@pythnetwork/hermes-client": "^2.0.0",
+    "@pythnetwork/pyth-solana-receiver": "^0.13.0"
+  },
   "devDependencies": {
     "@coral-xyz/anchor": "^0.30.1",
     "@eslint/js": "^9.39.2",
+    "@pythnetwork/hermes-client": "^2.1.0",
+    "@pythnetwork/pyth-solana-receiver": "^0.13.0",
     "@solana/spl-token": "^0.4.8",
     "@solana/web3.js": "^1.95.0",
     "@types/node": "^20.0.0",
@@ -68,6 +103,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "prettier": "^3.7.4",
     "tsup": "^8.0.0",
+    "tsx": "^4.7.0",
     "typescript": "^5.4.0",
     "typescript-eslint": "^8.52.0",
     "vitest": "^2.0.0"

@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { Program, BN } from "@coral-xyz/anchor";
+import { Program, BN } from "../internal/anchor";
 import type { Payflow } from "../idl/payflow";
 import { findMeteoraLpDealPDA } from "../pda";
 import { fromAnchorDealStatus, DealStatus } from "../types/enums";

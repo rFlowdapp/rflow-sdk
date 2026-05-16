@@ -28,5 +28,7 @@ export type {
   CreateYieldDealInput,
   CreateMeteoraLpDealInput,
   ClaimMeteoraFeesInput,
+  WithdrawMeteoraLiquidityInput,
+  SplitMeteoraPositionInput,
   DealFilters,
 } from "./sdk";

@@ -1,4 +1,4 @@
-import { Program } from "@coral-xyz/anchor";
+import { Program } from "../internal/anchor";
 import type { Payflow } from "../idl/payflow";
 import { findProtocolConfigPDA } from "../pda";
 import type { ProtocolConfig } from "../types/sdk";
@@ -20,6 +20,8 @@ export function transformProtocolConfig(account: ProtocolConfigAccount): Protoco
     isPaused: account.isPaused,
     dealCounter: account.dealCounter.toNumber(),
     allowedMints: account.allowedMints,
+    allowedPaymentMints: account.allowedPaymentMints,
+    useOracle: account.useOracle,
   };
 }
 

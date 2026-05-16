@@ -3,7 +3,11 @@ export {
   RFlowClient,
   YieldDealClient,
   MeteoraLpDealClient,
+  buildAtaPreInstructions,
+  getPythPriceUpdate,
   type RFlowClientConfig,
+  type SettleOverrides,
+  type SettleMeteoraLpDealInput,
 } from "./client";
 
 // Constants
@@ -12,9 +16,16 @@ export {
   SEEDS,
   KNOWN_MINTS,
   TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
   SYSTEM_PROGRAM_ID,
   RENT_SYSVAR_ID,
   VALID_DURATIONS,
+  PYTH_HERMES_API,
+  PYTH_PRICE_FEEDS,
+  LST_MINT_TO_PYTH_FEED,
+  isLSTToken,
+  getPythFeedForMint,
   type DealDuration,
 } from "./constants";
 
@@ -39,6 +50,8 @@ export type {
   CreateYieldDealInput,
   CreateMeteoraLpDealInput,
   ClaimMeteoraFeesInput,
+  WithdrawMeteoraLiquidityInput,
+  SplitMeteoraPositionInput,
   DealFilters,
 } from "./types/sdk";
 
@@ -109,6 +122,12 @@ export {
   ERROR_CODES,
   type ErrorContext,
 } from "./errors";
+
+// Re-exported anchor primitives (CJS-interop-safe). Use these from the SDK
+// instead of importing from `@coral-xyz/anchor` directly — anchor's package
+// has no `exports` map and pure Node ESM cannot statically bind its named
+// exports.
+export { BN, AnchorProvider, Program, Wallet, type Idl } from "./internal/anchor";
 
 // IDL type
 export type { Payflow } from "./idl/payflow";

@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { BN } from "@coral-xyz/anchor";
+import type { BN } from "@coral-xyz/anchor";
 import type { AnchorDealStatus, AnchorSourceProtocol } from "./enums";
 
 /**
@@ -17,6 +17,8 @@ export interface YieldDealAccount {
   expectedYield: BN;
   sellingPrice: BN;
   paymentMint: PublicKey;
+  /** Exchange rate at lock time (scaled by 1e6) - used for anti-manipulation validation */
+  exchangeRateAtLock: BN;
   durationDays: number;
   createdAt: BN;
   purchasedAt: BN;
@@ -68,6 +70,8 @@ export interface ProtocolConfigAccount {
   dealCounter: BN;
   bump: number;
   allowedMints: PublicKey[];
+  allowedPaymentMints: PublicKey[];
+  useOracle: boolean;
 }
 
 /**
@@ -80,6 +84,8 @@ export interface CreateDealParams {
   sellingPrice: BN;
   durationDays: number;
   sourceProtocol: AnchorSourceProtocol;
+  /** Exchange rate at lock time (scaled by 1e6, e.g., 1.05 = 1_050_000) */
+  exchangeRateAtLock: BN;
 }
 
 /**

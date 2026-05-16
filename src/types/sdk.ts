@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { BN } from "@coral-xyz/anchor";
+import type { BN } from "@coral-xyz/anchor";
 import { DealStatus, SourceProtocol } from "./enums";
 import type { DealDuration } from "../constants";
 
@@ -129,6 +129,10 @@ export interface ProtocolConfig {
   dealCounter: number;
   /** Whitelist of allowed receipt token mints */
   allowedMints: PublicKey[];
+  /** Whitelist of allowed payment token mints */
+  allowedPaymentMints: PublicKey[];
+  /** Whether oracle validation is enabled */
+  useOracle: boolean;
 }
 
 /**
@@ -137,13 +141,13 @@ export interface ProtocolConfig {
 export interface CreateYieldDealInput {
   /** Receipt token mint address */
   receiptTokenMint: PublicKey;
-  /** Amount of receipt tokens to lock */
+  /** Amount of receipt tokens to lock (raw u64 in mint's smallest units) */
   receiptTokensAmount: number | BN;
-  /** Value in underlying at lock time */
+  /** Value in underlying at lock time (raw u64 in payment-mint smallest units) */
   principalValueAtLock: number | BN;
-  /** Expected yield over duration */
+  /** Expected yield over duration (raw u64 in payment-mint smallest units) */
   expectedYield: number | BN;
-  /** Asking price in payment token */
+  /** Asking price in payment token (raw u64) */
   sellingPrice: number | BN;
   /** Duration in days (30, 60, 90, 180, 365) */
   durationDays: DealDuration;
@@ -151,6 +155,24 @@ export interface CreateYieldDealInput {
   sourceProtocol: SourceProtocol;
   /** Payment token mint (defaults to USDC) */
   paymentMint?: PublicKey;
+  /**
+   * Optional Pyth price update account. Required on mainnet for LST receipt
+   * tokens when `config.use_oracle` is true. When omitted and the conditions
+   * apply, the SDK auto-fetches via {@link getPythPriceUpdate}; set
+   * `fetchPythPriceUpdate: false` to disable that behaviour.
+   */
+  priceUpdate?: PublicKey;
+  /**
+   * Auto-fetch Pyth price update when missing and required (defaults true).
+   * Set to false if you want createDeal to error instead of fetching.
+   */
+  fetchPythPriceUpdate?: boolean;
+  /**
+   * Exchange rate at lock time (scaled by 1e6).
+   * e.g. for kUSDC at 1.05 rate: 1_050_000
+   * Used by the program for the ±10% tolerance band at settlement.
+   */
+  exchangeRateAtLock: number | BN;
 }
 
 /**
@@ -203,6 +225,10 @@ export interface ClaimMeteoraFeesInput {
   poolTokenAVault: PublicKey;
   /** Pool's Token B vault */
   poolTokenBVault: PublicKey;
+  /** Token A program (Token or Token-2022). Defaults to TOKEN_PROGRAM_ID. */
+  tokenAProgram?: PublicKey;
+  /** Token B program (Token or Token-2022). Defaults to TOKEN_PROGRAM_ID. */
+  tokenBProgram?: PublicKey;
 }
 
 /**
@@ -221,4 +247,70 @@ export interface DealFilters {
   minPrice?: BN | number;
   /** Filter by maximum price */
   maxPrice?: BN | number;
+}
+
+/**
+ * Input for withdrawing Meteora liquidity after deal settlement
+ */
+export interface WithdrawMeteoraLiquidityInput {
+  /** Deal ID */
+  dealId: number | BN;
+  /** Meteora DAMM v2 program address */
+  meteoraProgram: PublicKey;
+  /** Meteora position account */
+  meteoraPosition: PublicKey;
+  /** Meteora pool account */
+  meteoraPool: PublicKey;
+  /** Pool's Token A vault */
+  poolTokenAVault: PublicKey;
+  /** Pool's Token B vault */
+  poolTokenBVault: PublicKey;
+  /** Meteora pool authority (constant) */
+  poolAuthority: PublicKey;
+  /** Meteora event authority PDA */
+  eventAuthority: PublicKey;
+  /** Token A program (Token or Token2022) */
+  tokenAProgram: PublicKey;
+  /** Token B program (Token or Token2022) */
+  tokenBProgram: PublicKey;
+  /** Optional NFT token program override (defaults to `tokenAProgram`) */
+  nftTokenProgram?: PublicKey;
+  /** Minimum Token A to receive (slippage protection) */
+  tokenAAmountThreshold: number | BN;
+  /** Minimum Token B to receive (slippage protection) */
+  tokenBAmountThreshold: number | BN;
+}
+
+/**
+ * Input for splitting a Meteora position
+ */
+export interface SplitMeteoraPositionInput {
+  /** Meteora pool address */
+  meteoraPool: PublicKey;
+  /** Source position account (to split from) */
+  sourcePosition: PublicKey;
+  /** Source position NFT mint */
+  sourceNftMint: PublicKey;
+  /** Target position account (receives split) */
+  targetPosition: PublicKey;
+  /** Target position NFT mint */
+  targetNftMint: PublicKey;
+  /** Meteora DAMM v2 program address */
+  meteoraProgram: PublicKey;
+  /** Meteora event authority PDA */
+  eventAuthority: PublicKey;
+  /** NFT token program (Token or Token2022) */
+  nftTokenProgram?: PublicKey;
+  /** Percentage of unlocked liquidity to transfer (0-100) */
+  unlockedLiquidityPercentage: number;
+  /** Percentage of permanent locked liquidity to transfer (0-100) */
+  permanentLockedLiquidityPercentage: number;
+  /** Percentage of pending fee A to transfer (0-100) */
+  feeAPercentage: number;
+  /** Percentage of pending fee B to transfer (0-100) */
+  feeBPercentage: number;
+  /** Percentage of reward 0 to transfer (0-100) */
+  reward0Percentage: number;
+  /** Percentage of reward 1 to transfer (0-100) */
+  reward1Percentage: number;
 }

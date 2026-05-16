@@ -28,7 +28,6 @@ describe("DealStatus enum", () => {
 describe("SourceProtocol enum", () => {
   it("should have all lending protocols", () => {
     expect(SourceProtocol.Kamino).toBe("kamino");
-    expect(SourceProtocol.MarginFi).toBe("marginfi");
     expect(SourceProtocol.Solend).toBe("solend");
     expect(SourceProtocol.Save).toBe("save");
   });
@@ -38,7 +37,6 @@ describe("SourceProtocol enum", () => {
     expect(SourceProtocol.Jito).toBe("jito");
     expect(SourceProtocol.Blaze).toBe("blaze");
     expect(SourceProtocol.Sanctum).toBe("sanctum");
-    expect(SourceProtocol.Lido).toBe("lido");
   });
 
   it("should have all LP protocols", () => {
@@ -51,9 +49,9 @@ describe("SourceProtocol enum", () => {
     expect(SourceProtocol.FeeStream).toBe("fee_stream");
   });
 
-  it("should have exactly 13 protocols", () => {
+  it("should have exactly 11 protocols (matches on-chain IDL)", () => {
     const values = Object.values(SourceProtocol);
-    expect(values).toHaveLength(13);
+    expect(values).toHaveLength(11);
   });
 });
 
@@ -61,7 +59,6 @@ describe("getProtocolCategory", () => {
   describe("lending protocols", () => {
     it.each([
       [SourceProtocol.Kamino],
-      [SourceProtocol.MarginFi],
       [SourceProtocol.Solend],
       [SourceProtocol.Save],
     ])("should return 'lending' for %s", (protocol) => {
@@ -75,7 +72,6 @@ describe("getProtocolCategory", () => {
       [SourceProtocol.Jito],
       [SourceProtocol.Blaze],
       [SourceProtocol.Sanctum],
-      [SourceProtocol.Lido],
     ])("should return 'staking' for %s", (protocol) => {
       expect(getProtocolCategory(protocol)).toBe("staking");
     });
@@ -111,22 +107,20 @@ describe("toAnchorSourceProtocol", () => {
     expect(result).toEqual({ kamino: {} });
   });
 
-  it("should convert MarginFi to Anchor format", () => {
-    const result = toAnchorSourceProtocol(SourceProtocol.MarginFi);
-    expect(result).toEqual({ marginFi: {} });
+  it("should convert Sanctum to Anchor format", () => {
+    const result = toAnchorSourceProtocol(SourceProtocol.Sanctum);
+    expect(result).toEqual({ sanctum: {} });
   });
 
   it("should convert all protocols correctly", () => {
     const expectedMappings: [SourceProtocol, AnchorSourceProtocol][] = [
       [SourceProtocol.Kamino, { kamino: {} }],
-      [SourceProtocol.MarginFi, { marginFi: {} }],
       [SourceProtocol.Solend, { solend: {} }],
       [SourceProtocol.Save, { save: {} }],
       [SourceProtocol.Marinade, { marinade: {} }],
       [SourceProtocol.Jito, { jito: {} }],
       [SourceProtocol.Blaze, { blaze: {} }],
       [SourceProtocol.Sanctum, { sanctum: {} }],
-      [SourceProtocol.Lido, { lido: {} }],
       [SourceProtocol.RaydiumLp, { raydiumLp: {} }],
       [SourceProtocol.MeteoraLp, { meteoraLp: {} }],
       [SourceProtocol.OrcaLp, { orcaLp: {} }],
@@ -145,22 +139,20 @@ describe("fromAnchorSourceProtocol", () => {
     expect(result).toBe(SourceProtocol.Kamino);
   });
 
-  it("should convert Anchor MarginFi to SDK format", () => {
-    const result = fromAnchorSourceProtocol({ marginFi: {} });
-    expect(result).toBe(SourceProtocol.MarginFi);
+  it("should convert Anchor Sanctum to SDK format", () => {
+    const result = fromAnchorSourceProtocol({ sanctum: {} });
+    expect(result).toBe(SourceProtocol.Sanctum);
   });
 
   it("should convert all Anchor protocols correctly", () => {
     const mappings: [AnchorSourceProtocol, SourceProtocol][] = [
       [{ kamino: {} }, SourceProtocol.Kamino],
-      [{ marginFi: {} }, SourceProtocol.MarginFi],
       [{ solend: {} }, SourceProtocol.Solend],
       [{ save: {} }, SourceProtocol.Save],
       [{ marinade: {} }, SourceProtocol.Marinade],
       [{ jito: {} }, SourceProtocol.Jito],
       [{ blaze: {} }, SourceProtocol.Blaze],
       [{ sanctum: {} }, SourceProtocol.Sanctum],
-      [{ lido: {} }, SourceProtocol.Lido],
       [{ raydiumLp: {} }, SourceProtocol.RaydiumLp],
       [{ meteoraLp: {} }, SourceProtocol.MeteoraLp],
       [{ orcaLp: {} }, SourceProtocol.OrcaLp],
